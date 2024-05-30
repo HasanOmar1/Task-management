@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Specifies the target JavaScript version.
+    "module": "ESNext", // Specifies the module code generation method.
+    "outDir": "./dist", // Redirects output structure to the directory.
+    "strict": true, // Enable all strict type-checking options.
+    "moduleResolution": "node", // Resolve modules using Node.js-style resolution.
+    "esModuleInterop": true, // Enables emit interoperability between CommonJS and ES Modules.
+    "skipLibCheck": true, // Skip type checking of all declaration files.
+    "forceConsistentCasingInFileNames": true // Ensure file names are case-sensitive.
+  },
+  "include": ["server.ts"], // Specifies the input files or directories.
+  "exclude": ["node_modules", "dist"] // Exclude directories from being compiled.
+}
