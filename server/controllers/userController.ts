@@ -12,16 +12,31 @@ export const getUsers = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
-  const q = "INSERT INTO users(email , password) VALUES (?,?)";
+  const q = "INSERT INTO users SET ?";
   const { email, password } = req.body;
-  console.log(req.body);
 
-  db.query<ResultSetHeader>(q, { email, password }, (err, result) => {
-    if (err) return next(err);
-    console.log(result);
-    res.status(201);
-    res.send(result);
-  });
+  try {
+    if (password.length < 3) {
+      res.status(STATUS_CODES.BAD_REQUEST);
+      throw new Error("Password must be at least 3 characters");
+    }
+
+    db.query<ResultSetHeader>(q, { email, password }, (err, result) => {
+      if (err) {
+        return next(err);
+      }
+
+      const createdUserId = result.insertId;
+      const getUserQuery = "SELECT * from users WHERE id = ?";
+      db.query<RowDataPacket[]>(getUserQuery, createdUserId, (err, result) => {
+        if (err) return next(err);
+
+        res.status(STATUS_CODES.CREATED).send(result);
+      });
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteUser = (req: Request, res: Response, next: NextFunction) => {
@@ -33,9 +48,15 @@ export const deleteUser = (req: Request, res: Response, next: NextFunction) => {
 
     if (!result.affectedRows) {
       res.status(STATUS_CODES.NOT_FOUND);
-      res.send(`User with the id of ${id} does not exist`);
+      res.send({
+        ok: false,
+        message: `User with the id of ${id} does not exist.`,
+      });
     } else {
-      res.send(result);
+      res.send({
+        ok: true,
+        message: `User with the id of ${id} has been deleted!`,
+      });
     }
   });
 };
