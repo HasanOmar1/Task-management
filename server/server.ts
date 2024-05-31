@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRouter from "./routes/userRoute.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
