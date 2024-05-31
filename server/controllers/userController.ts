@@ -78,30 +78,53 @@ export const createUser = async (
         res.status(STATUS_CODE.CONFLICT);
         return next(error);
       }
-    });
 
-    const createUserQuery =
-      "INSERT INTO users(`name`,`email`, `password`) VALUES (?)";
+      const createUserQuery =
+        "INSERT INTO users(`name`,`email`, `password`) VALUES (?)";
 
-    // hash = the hashed password
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) return res.json({ Error: "Error in hashing password" });
-      const upperCaseName = firstLetterBig(name);
-      const values = [upperCaseName, email, hash];
-      db.query<ResultSetHeader>(
-        createUserQuery,
-        [values],
-        async (err, result) => {
-          if (err) {
-            console.log(err);
-            return res.json({ Error: "Error in creating user" });
+      // hash = the hashed password
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) return res.json({ Error: "Error in hashing password" });
+        const upperCaseName = firstLetterBig(name);
+        const values = [upperCaseName, email, hash];
+        db.query<ResultSetHeader>(
+          createUserQuery,
+          [values],
+          async (err, result) => {
+            if (err) {
+              console.log(err);
+              return res.json({ Error: "Error in creating user" });
+            }
+            const user = await getUserById(result.insertId);
+            console.log(user);
+            res.json(user);
           }
-          const user = await getUserById(result.insertId);
-          console.log(user);
-          res.json(user);
-        }
-      );
+        );
+      });
     });
+
+    // const createUserQuery =
+    //   "INSERT INTO users(`name`,`email`, `password`) VALUES (?)";
+
+    // // hash = the hashed password
+    // bcrypt.hash(password, 10, (err, hash) => {
+    //   if (err) return res.json({ Error: "Error in hashing password" });
+    //   const upperCaseName = firstLetterBig(name);
+    //   const values = [upperCaseName, email, hash];
+    //   db.query<ResultSetHeader>(
+    //     createUserQuery,
+    //     [values],
+    //     async (err, result) => {
+    //       if (err) {
+    //         console.log(err);
+    //         return res.json({ Error: "Error in creating user" });
+    //       }
+    //       const user = await getUserById(result.insertId);
+    //       console.log(user);
+    //       res.json(user);
+    //     }
+    //   );
+    // });
   });
 };
 
