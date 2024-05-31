@@ -21,93 +21,154 @@ export const getUsers = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // helper function
-const getUserById = (id: number) => {
+const getUserById = (userId: number) => {
   return new Promise((resolve, reject) => {
-    const q = "SELECT * FROM users WHERE id = ?";
-    db.query<RowDataPacket[]>(q, id, (err, result) => {
+    const q = "SELECT * FROM users WHERE userId = ?";
+    db.query<RowDataPacket[]>(q, userId, (err, result) => {
       if (err) return reject(err);
       if (result.length === 0) {
         return reject("User not found");
       }
 
       const createdUser = {
-        id: result[0].id,
+        userId: result[0].userId,
         email: result[0].email,
         password: result[0].password,
-        token: generateToken(result[0].id, result[0].email),
+        token: generateToken(result[0].userId, result[0].email),
       };
       resolve(createdUser);
     });
   });
 };
 
+// export const createUser = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { name, email, password } = req.body;
+
+//   if (!name || !email || !password) {
+//     const error = new Error("Please fill all fields");
+//     res.status(STATUS_CODE.BAD_REQUEST);
+//     return next(error);
+//   }
+
+//   const getEmailQuery = "SELECT * FROM users WHERE email = ?";
+//   db.query<RowDataPacket[]>(getEmailQuery, email, (err, result) => {
+//     if (err) return next(err);
+
+//     if (result.length > 0) {
+//       const error = new Error("Email already exists");
+//       res.status(STATUS_CODE.CONFLICT);
+//       return next(error);
+//     }
+
+//     if (password.length < 3) {
+//       const error = new Error("Password must be at least 3 characters long");
+//       res.status(STATUS_CODE.BAD_REQUEST);
+//       return next(error);
+//     }
+
+//     const getNameQuery = "SELECT * FROM users WHERE LOWER(name) = ?";
+//     db.query<RowDataPacket[]>(getNameQuery, name, (nameError, nameResult) => {
+//       if (nameError) return next(nameError);
+//       if (nameResult.length > 0) {
+//         const error = new Error("This name is already taken");
+//         res.status(STATUS_CODE.CONFLICT);
+//         return next(error);
+//       }
+
+//       const createUserQuery =
+//         "INSERT INTO users(`name`,`email`, `password`) VALUES (?)";
+
+//       // hash = the hashed password
+//       bcrypt.hash(password, 10, (err, hash) => {
+//         if (err) return res.json({ Error: "Error in hashing password" });
+//         const upperCaseName = firstLetterBig(name);
+//         const values = [upperCaseName, email, hash];
+//         db.query<ResultSetHeader>(
+//           createUserQuery,
+//           [values],
+//           async (err, result) => {
+//             if (err) {
+//               console.log(err);
+//               return res.json({ Error: "Error in creating user" });
+//             }
+//             const user = await getUserById(result.insertId);
+//             console.log(user);
+//             res.json(user);
+//           }
+//         );
+//       });
+//     });
+//   });
+// };
+
 export const createUser = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    const error = new Error("Please fill all fields");
-    res.status(STATUS_CODE.BAD_REQUEST);
-    return next(error);
-  }
+    if (!name || !email || !password) {
+      res.status(STATUS_CODE.BAD_REQUEST);
+      return next(new Error("Please fill all fields"));
+    }
 
-  const getEmailQuery = "SELECT * FROM users WHERE email = ?";
-  db.query<RowDataPacket[]>(getEmailQuery, email, (err, result) => {
-    if (err) return next(err);
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedName = name.trim().toLowerCase();
 
-    if (result.length > 0) {
-      const error = new Error("Email already exists");
+    const [emailResult] = await db
+      .promise()
+      .query<RowDataPacket[]>("SELECT * FROM users WHERE email = ?", [
+        trimmedEmail,
+      ]);
+
+    if (emailResult.length > 0) {
       res.status(STATUS_CODE.CONFLICT);
-      return next(error);
+      return next(new Error("Email already exists"));
     }
 
     if (password.length < 3) {
-      const error = new Error("Password must be at least 3 characters long");
       res.status(STATUS_CODE.BAD_REQUEST);
-      return next(error);
+      return next(new Error("Password must be at least 3 characters long"));
     }
 
-    const getNameQuery = "SELECT * FROM users WHERE LOWER(name) = ?";
-    db.query<RowDataPacket[]>(getNameQuery, name, (nameError, nameResult) => {
-      if (nameError) return next(nameError);
-      if (nameResult.length > 0) {
-        const error = new Error("This name is already taken");
-        res.status(STATUS_CODE.CONFLICT);
-        return next(error);
-      }
+    const [nameResult] = await db
+      .promise()
+      .query<RowDataPacket[]>("SELECT * FROM users WHERE LOWER(name) = ?", [
+        trimmedName,
+      ]);
 
-      const createUserQuery =
-        "INSERT INTO users(`name`,`email`, `password`) VALUES (?)";
+    if (nameResult.length > 0) {
+      res.status(STATUS_CODE.CONFLICT);
+      return next(new Error("This name is already taken"));
+    }
 
-      // hash = the hashed password
-      bcrypt.hash(password, 10, (err, hash) => {
-        if (err) return res.json({ Error: "Error in hashing password" });
-        const upperCaseName = firstLetterBig(name);
-        const values = [upperCaseName, email, hash];
-        db.query<ResultSetHeader>(
-          createUserQuery,
-          [values],
-          async (err, result) => {
-            if (err) {
-              console.log(err);
-              return res.json({ Error: "Error in creating user" });
-            }
-            const user = await getUserById(result.insertId);
-            console.log(user);
-            res.json(user);
-          }
-        );
-      });
-    });
-  });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const formattedName = firstLetterBig(trimmedName);
+    const values = [formattedName, trimmedEmail, hashedPassword];
+
+    const [result] = await db
+      .promise()
+      .query<ResultSetHeader>(
+        "INSERT INTO users(`name`, `email`, `password`) VALUES (?)",
+        [values]
+      );
+
+    const user = await getUserById(result.insertId);
+    res.status(STATUS_CODE.CREATED).json(user);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteUser = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
-  const findUserById = "SELECT * FROM users WHERE id = ?";
+  const findUserById = "SELECT * FROM users WHERE userId = ?";
 
   db.query<RowDataPacket[]>(findUserById, id, (err, userResult) => {
     if (err) return next(err);
@@ -117,7 +178,7 @@ export const deleteUser = (req: Request, res: Response, next: NextFunction) => {
       return next(error);
     }
 
-    const deleteById = "DELETE FROM users WHERE id = ?";
+    const deleteById = "DELETE FROM users WHERE userId = ?";
     db.query<ResultSetHeader>(deleteById, id, (err, result) => {
       if (err) return next(err);
       res.send({ message: "User has been deleted", data: userResult });
