@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import STATUS_CODE from "../constants/statusCodes.js";
 import { firstLetterBig } from "../utils/toUpperCase.js";
-import { AuthenticatedRequest } from "../utils/AuthenticatedRequest.js";
 
 type User = {
   userId: number;
@@ -21,13 +20,23 @@ const generateToken = (userId: number, email: string) => {
   });
 };
 
-export const testFun = async (
-  req: AuthenticatedRequest,
+export const createTable = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    res.send(req.user);
+    const tableQuery = `CREATE TABLE
+       users
+      (userId INT AUTO_INCREMENT,
+       name VARCHAR(20) UNIQUE ,
+       email VARCHAR(255) UNIQUE ,
+       password VARCHAR(255) ,
+       PRIMARY KEY(userId))`;
+
+    const [result] = await db.promise().query<ResultSetHeader>(tableQuery);
+
+    res.send(`Table has been created`);
   } catch (error) {
     next(error);
   }
