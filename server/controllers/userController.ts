@@ -53,11 +53,6 @@ export const getUsers = async (
     const q = "SELECT * FROM users";
     const [result] = await db.promise().query<RowDataPacket[]>(q);
 
-    if (result.length === 0) {
-      res.status(STATUS_CODE.NOT_FOUND);
-      throw new Error("The database is empty");
-    }
-
     res.send(result);
   } catch (error) {
     next(error);
@@ -141,7 +136,7 @@ export const createUser = async (
       .query<ResultSetHeader>(insertQuery, [values]);
 
     const user = await getUserById(result.insertId);
-    res.status(STATUS_CODE.CREATED).json(user);
+    res.status(STATUS_CODE.CREATED).send(user);
   } catch (error) {
     next(error);
   }
