@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import STATUS_CODE from "../constants/statusCodes.js";
 import { firstLetterBig } from "../utils/toUpperCase.js";
+import { AuthenticatedRequest } from "../utils/AuthenticatedRequest.js";
 
 type User = {
   userId: number;
@@ -14,10 +15,22 @@ type User = {
   token: string;
 };
 
-const generateToken = (id: number, email: string) => {
-  return jwt.sign({ id, email }, process.env.JWT_SECRET ?? "secret", {
+const generateToken = (userId: number, email: string) => {
+  return jwt.sign({ userId, email }, process.env.JWT_SECRET ?? "secret", {
     expiresIn: "7d",
   });
+};
+
+export const testFun = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.send(req.user);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getUsers = async (
