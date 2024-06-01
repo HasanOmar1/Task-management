@@ -50,9 +50,46 @@ export const getAllTasks = async (
   }
 };
 
+export const getAllTasksDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const taskDetailsQuery = `
+    SELECT
+    tasks.taskId,
+    assignor.name AS assignor  ,
+    tasks.task ,
+    assignTo.name AS assignTo,
+    tasks.status ,
+    tasks.priority ,
+    tasks.creationDate
+    FROM 
+    tasks
+    JOIN
+    users AS assignor ON assignor.userId = tasks.assignor
+    JOIN
+    users AS assignTo  ON assignTo.userId = tasks.assignTo`;
+
+    const [result] = await db
+      .promise()
+      .query<RowDataPacket[]>(taskDetailsQuery);
+
+    if (result.length === 0) {
+      res.status(STATUS_CODE.NOT_FOUND);
+      throw new Error("Task not found");
+    }
+
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 //helper function
 
-const getTaskById = async (id: number) => {
+const getTaskById = async (id: number | string) => {
   try {
     const taskQuery = "SELECT * FROM tasks WHERE taskId = ?";
     const [result] = await db.promise().query<RowDataPacket[]>(taskQuery, [id]);
@@ -103,6 +140,7 @@ export const getTaskDetailsById = async (
     const { id } = req.params;
     const taskDetailsQuery = `
     SELECT
+    tasks.taskId,
     assignor.name AS assignor  ,
     tasks.task ,
     assignTo.name AS assignTo,
@@ -127,6 +165,28 @@ export const getTaskDetailsById = async (
     }
 
     res.send(result[0]);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const deletedTask = await getTaskById(id);
+    const taskQuery = "DELETE FROM tasks WHERE taskId = ?";
+
+    const [result] = await db.promise().query<ResultSetHeader>(taskQuery, [id]);
+    if (result.affectedRows === 0) {
+      res.status(STATUS_CODE.BAD_REQUEST);
+      throw new Error("Task not found");
+    }
+
+    res.send({ message: "Task has been deleted", data: deletedTask });
   } catch (error) {
     next(error);
   }
