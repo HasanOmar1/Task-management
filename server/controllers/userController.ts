@@ -20,7 +20,7 @@ const generateToken = (userId: number, email: string) => {
   });
 };
 
-export const createTable = async (
+export const createUsersTable = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -28,11 +28,13 @@ export const createTable = async (
   try {
     const tableQuery = `CREATE TABLE
        users
-      (userId INT AUTO_INCREMENT,
+      (
+        userId INT AUTO_INCREMENT,
        name VARCHAR(20) UNIQUE ,
        email VARCHAR(255) UNIQUE ,
        password VARCHAR(255) ,
-       PRIMARY KEY(userId))`;
+       PRIMARY KEY(userId)
+      )`;
 
     const [result] = await db.promise().query<ResultSetHeader>(tableQuery);
 
