@@ -123,6 +123,42 @@ export const createUser = async (
   }
 };
 
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(STATUS_CODE.BAD_REQUEST);
+      throw new Error("Please fill all fields");
+    }
+
+    const findUser = "SELECT * FROM users WHERE email = ?";
+    const [user] = await db.promise().query<RowDataPacket[]>(findUser, [email]);
+
+    if (user.length === 0) {
+      res.status(STATUS_CODE.NOT_FOUND);
+      throw new Error("This email does not exist");
+    }
+
+    if (user[0] && (await bcrypt.compare(password, user[0].password))) {
+      res.send({
+        userId: user[0].userId,
+        name: user[0].name,
+        email: user[0].email,
+        token: generateToken(user[0].userId, user[0].email),
+      });
+    } else {
+      res.status(STATUS_CODE.BAD_REQUEST);
+      throw new Error("Invalid Credentials");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteUser = async (
   req: Request,
   res: Response,
@@ -138,21 +174,21 @@ export const deleteUser = async (
     if (userResult.length === 0) {
       res.status(STATUS_CODE.NOT_FOUND);
       throw new Error("User not found");
-    } else {
-      const deleteUserQuery = "DELETE FROM users WHERE userId = ?";
-      const [deleteResult] = await db
-        .promise()
-        .query<ResultSetHeader>(deleteUserQuery, [id]);
-
-      if (deleteResult.affectedRows === 0) {
-        res.status(STATUS_CODE.NOT_FOUND);
-        throw new Error("User not found");
-      }
-      res.send({
-        message: "User deleted successfully",
-        data: userResult[0],
-      });
     }
+
+    const deleteUserQuery = "DELETE FROM users WHERE userId = ?";
+    const [deleteResult] = await db
+      .promise()
+      .query<ResultSetHeader>(deleteUserQuery, [id]);
+
+    if (deleteResult.affectedRows === 0) {
+      res.status(STATUS_CODE.NOT_FOUND);
+      throw new Error("User not found");
+    }
+    res.send({
+      message: "User deleted successfully",
+      data: userResult[0],
+    });
   } catch (error) {
     next(error);
   }

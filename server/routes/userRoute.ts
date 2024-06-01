@@ -3,27 +3,14 @@ import {
   createUser,
   deleteUser,
   getUsers,
+  login,
 } from "../controllers/userController.js";
-import bcrypt from "bcryptjs";
-import db from "../database.js";
 
-const route = express.Router();
+const router = express.Router();
 
-route.get("/", getUsers);
-route.post("/create", createUser);
+router.get("/", getUsers);
+router.post("/login", login);
+router.post("/create", createUser);
+router.delete("/delete/:id", deleteUser);
 
-// route.post("/create", (req, res) => {
-//   const sql = "INSERT INTO users (`email`,`password`) VALUES (?)";
-//   bcrypt.hash(req.body.password.toString(), 10, (err, hash) => {
-//     if (err) return res.json({ Error: "Error in hashing password" });
-//     const values = [req.body.email, hash];
-//     db.query(sql, [values], (err, result) => {
-//       if (err) return res.json({ Error: "Error query" });
-//       return res.json({ Status: "Success" });
-//     });
-//   });
-// });
-
-route.delete("/delete/:id", deleteUser);
-
-export default route;
+export default router;
