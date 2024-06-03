@@ -6,6 +6,7 @@ import {
   getAllTasks,
   getAllTasksDetails,
   getTaskDetailsById,
+  updateTask,
 } from "../controllers/taskController.js";
 import protect from "../middlewares/authMiddleware.js";
 
@@ -15,7 +16,10 @@ router.get("/", getAllTasks);
 router.get("/detailed", getAllTasksDetails);
 router.get("/:id", getTaskDetailsById);
 router.post("/create-table", createTasksTable);
-router.post("/create", protect, createTask);
-router.delete("/delete/:id", protect, deleteTask);
+// protected
+router.use(protect);
+router.post("/create", createTask);
+router.put("/update/:id", updateTask);
+router.delete("/delete/:id", deleteTask);
 
 export default router;

@@ -88,7 +88,6 @@ export const getAllTasksDetails = async (
 };
 
 //helper function
-
 const getTaskById = async (id: number | string) => {
   try {
     const taskQuery = "SELECT * FROM tasks WHERE taskId = ?";
@@ -187,6 +186,27 @@ export const deleteTask = async (
     }
 
     res.send({ message: "Task has been deleted", data: deletedTask });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const updateTaskQuery = `UPDATE tasks
+    SET ?
+    WHERE taskId = ?`;
+    const [result] = await db
+      .promise()
+      .query<ResultSetHeader>(updateTaskQuery, [req.body, id]);
+
+    const updatedTask = await getTaskById(id);
+    res.send(updatedTask);
   } catch (error) {
     next(error);
   }
