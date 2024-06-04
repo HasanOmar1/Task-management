@@ -1,1 +1,1 @@
-# Task-manager
+# Friday - Task management site
