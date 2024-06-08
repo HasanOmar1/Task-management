@@ -54,7 +54,6 @@ const ColumnDetails = ({ status }: ColumnDetailsProps) => {
       <div className="status">
         <h3>📃 {status}</h3>
       </div>
-
       <div className="tasks-container">
         {loadingTasks && <h3 className="loading">Loading...</h3>}
         {isSuccessTasks && (
@@ -130,6 +129,7 @@ const ColumnDetails = ({ status }: ColumnDetailsProps) => {
           </>
         )}
       </div>
+      <div> Add Task </div>
     </div>
   );
 };
