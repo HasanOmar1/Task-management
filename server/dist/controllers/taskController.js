@@ -162,3 +162,25 @@ export const updateTask = async (req, res, next) => {
         next(error);
     }
 };
+export const getTasksByStatus = async (req, res, next) => {
+    try {
+        const { status } = req.params;
+        const statusQuery = `SELECT t.taskId , a.name AS assignor ,
+    t.task , aTo.name AS assignTo ,
+    t.status , t.priority , t.creationDate
+    FROM tasks AS t
+    JOIN users AS a
+    ON a.userId = t.assignor
+    JOIN users AS aTo
+    ON aTo.userId = t.assignTo
+    WHERE t.status = ?;
+    `;
+        const [result] = await db
+            .promise()
+            .query(statusQuery, [status]);
+        res.send(result);
+    }
+    catch (error) {
+        next(error);
+    }
+};
