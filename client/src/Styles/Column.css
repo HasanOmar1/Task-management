@@ -39,6 +39,9 @@
   align-items: center;
   height: 100%;
 }
+.Column p {
+  letter-spacing: 0.9px;
+}
 .Column .task {
   margin: 20px;
   min-height: 200px;
@@ -70,6 +73,14 @@
 .Column .task .status-priority-container .header {
   border: 1px solid red;
 }
+.Column .task .status-priority-container .border {
+  border: 1px solid rgb(53, 107, 232);
+  width: 110px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .Column .task .status-container,
 .Column .task .priority-container {
   display: flex;
@@ -80,18 +91,9 @@
   padding: 10px;
   letter-spacing: 1.1px;
 }
-.Column .task .status-container p:first-child,
-.Column .task .priority-container p:first-child {
+.Column .task .status-container > p:first-child,
+.Column .task .priority-container > p:first-child {
   font-weight: bold;
-}
-.Column .task .status-container p:last-child,
-.Column .task .priority-container p:last-child {
-  border: 1px solid rgb(53, 107, 232);
-  width: 110px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .Column .task .barrier {
   border: 2px solid darkcyan;
@@ -101,9 +103,31 @@
   word-break: break-all;
   padding: 10px;
 }
-.Column .task .date {
+.Column .task .priority-popup {
+  position: relative;
+}
+.Column .task .priority-options {
+  position: absolute;
+  top: 100%;
+  width: 110px;
+  height: 140px;
+  background-color: #6c6767;
+  border: 1px solid rgb(53, 107, 232);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  flex-direction: column;
+  gap: 5px;
+}
+.Column .task .priority-options p {
+  border-bottom: 2px solid darkcyan;
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+}
+.Column .task .priority-options p:last-child {
+  border: none;
+}
+.Column .task .select-priority {
+  cursor: pointer;
 }/*# sourceMappingURL=Column.css.map */
