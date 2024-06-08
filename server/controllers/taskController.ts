@@ -218,10 +218,12 @@ export const getTasksByStatus = async (
   next: NextFunction
 ) => {
   try {
+    const { status } = req.params;
     const statusQuery = `SELECT * FROM tasks WHERE status = ?`;
+
     const [result] = await db
       .promise()
-      .query<RowDataPacket[]>(statusQuery, [req.body.status]);
+      .query<RowDataPacket[]>(statusQuery, [status]);
     res.send(result);
   } catch (error) {
     next(error);

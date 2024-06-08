@@ -6,15 +6,38 @@ const tasksApi = createApi({
   tagTypes: ["task"],
   baseQuery: fetchBaseQuery({ baseUrl: serverApiUrl }),
   endpoints: (builder) => ({
-    getTodos: builder.query({
-      query: () => ({
-        url: "/tasks/detailed",
+    getTasks: builder.query({
+      query: (status) => ({
+        url: `/tasks/detailed/${status}`,
         method: "GET",
       }),
+      providesTags: ["task"],
+    }),
+
+    createTask: builder.mutation({
+      query: (task) => ({
+        url: `/tasks/create`,
+        method: "POST",
+        body: task,
+      }),
+      invalidatesTags: ["task"],
+    }),
+
+    updateTask: builder.mutation({
+      query: (id: string, newTask) => ({
+        url: `/tasks/update/${id}`,
+        method: "PUT",
+        body: newTask,
+      }),
+      invalidatesTags: ["task"],
     }),
   }),
 });
 
-export const { useGetTodosQuery } = tasksApi;
+export const {
+  useGetTasksQuery,
+  useCreateTaskMutation,
+  useUpdateTaskMutation,
+} = tasksApi;
 
 export default tasksApi;

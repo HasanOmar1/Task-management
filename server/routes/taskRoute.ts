@@ -15,7 +15,7 @@ const router = Router();
 
 router.get("/", getAllTasks);
 router.get("/detailed", getAllTasksDetails);
-router.get("/detailed/byStatus", getTasksByStatus);
+router.get("/detailed/:status", getTasksByStatus);
 router.get("/:id", getTaskDetailsById);
 router.post("/create-table", createTasksTable);
 // protected
