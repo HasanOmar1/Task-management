@@ -211,3 +211,19 @@ export const updateTask = async (
     next(error);
   }
 };
+
+export const getTasksByStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const statusQuery = `SELECT * FROM tasks WHERE status = ?`;
+    const [result] = await db
+      .promise()
+      .query<RowDataPacket[]>(statusQuery, [req.body.status]);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};

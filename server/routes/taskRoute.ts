@@ -6,6 +6,7 @@ import {
   getAllTasks,
   getAllTasksDetails,
   getTaskDetailsById,
+  getTasksByStatus,
   updateTask,
 } from "../controllers/taskController.js";
 import protect from "../middlewares/authMiddleware.js";
@@ -14,6 +15,7 @@ const router = Router();
 
 router.get("/", getAllTasks);
 router.get("/detailed", getAllTasksDetails);
+router.get("/detailed/byStatus", getTasksByStatus);
 router.get("/:id", getTaskDetailsById);
 router.post("/create-table", createTasksTable);
 // protected
