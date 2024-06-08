@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGetTasksQuery } from "../api/tasksApi";
+import { useGetTasksQuery, useUpdateTaskMutation } from "../api/tasksApi";
 import { TaskType } from "../types/TaskType";
 
 type ColumnDetailsProps = {
@@ -17,12 +17,22 @@ const ColumnDetails = ({ status }: ColumnDetailsProps) => {
     error: errorTasks,
     isSuccess: isSuccessTasks,
   } = useGetTasksQuery(status);
+  const [updateTask] = useUpdateTaskMutation();
 
   const handlePriorityStatus = (taskId: number) => {
     setPriorityStatus((prevStatus) => ({
       ...prevStatus,
       [taskId]: !prevStatus[taskId],
     }));
+  };
+
+  const handleUpdateTask = (taskId: number, priority: string) => {
+    handlePriorityStatus(taskId);
+
+    updateTask({
+      id: taskId,
+      priority,
+    });
   };
 
   const taskStatusColor = (color: string) => {
@@ -73,25 +83,31 @@ const ColumnDetails = ({ status }: ColumnDetailsProps) => {
                         <div className="priority-options">
                           <p
                             className="select-priority"
-                            onClick={() => handlePriorityStatus(task.taskId)}
+                            onClick={() => handleUpdateTask(task.taskId, "Low")}
                           >
                             Low
                           </p>
                           <p
                             className="select-priority"
-                            onClick={() => handlePriorityStatus(task.taskId)}
+                            onClick={() =>
+                              handleUpdateTask(task.taskId, "Medium")
+                            }
                           >
                             Medium
                           </p>
                           <p
                             className="select-priority"
-                            onClick={() => handlePriorityStatus(task.taskId)}
+                            onClick={() =>
+                              handleUpdateTask(task.taskId, "High")
+                            }
                           >
                             High
                           </p>
                           <p
                             className="select-priority"
-                            onClick={() => handlePriorityStatus(task.taskId)}
+                            onClick={() =>
+                              handleUpdateTask(task.taskId, "Very High")
+                            }
                           >
                             Very High
                           </p>

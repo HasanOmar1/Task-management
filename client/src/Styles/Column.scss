@@ -120,13 +120,13 @@
       border: 1px solid $blueBorder;
       @include flex;
       flex-direction: column;
-      gap: 5px;
 
       p {
         border-bottom: 2px solid darkcyan;
         width: 100%;
         text-align: center;
-        padding: 5px;
+        height: 100%;
+        padding-top: 10px;
       }
 
       p:last-child {
@@ -136,6 +136,10 @@
 
     .select-priority {
       cursor: pointer;
+    }
+
+    .select-priority:hover {
+      background-color: #111;
     }
   }
 }

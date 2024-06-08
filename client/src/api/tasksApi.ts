@@ -24,10 +24,10 @@ const tasksApi = createApi({
     }),
 
     updateTask: builder.mutation({
-      query: (id: string, newTask) => ({
+      query: ({ id, priority }) => ({
         url: `/tasks/update/${id}`,
         method: "PUT",
-        body: newTask,
+        body: { priority },
       }),
       invalidatesTags: ["task"],
     }),
