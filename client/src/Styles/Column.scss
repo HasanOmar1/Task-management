@@ -18,6 +18,11 @@
     border-radius: 10px;
   }
 
+  .tasks-container {
+    overflow-y: auto;
+    height: 700px;
+    border-bottom: 2px solid darkcyan;
+  }
   .status {
     background-color: #333;
     height: 50px;
@@ -28,6 +33,80 @@
       font-family: Verdana, Geneva, Tahoma, sans-serif;
       @include flex;
       padding-top: 10px;
+    }
+  }
+
+  .loading {
+    @include flex;
+    height: 100%;
+  }
+
+  .task {
+    margin: 20px;
+    min-height: 200px;
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    // cursor: pointer;
+    background-color: $lightBlack;
+
+    .assign-container {
+      @include flex;
+      padding: 10px;
+
+      span {
+        padding: 0 5px;
+        font-weight: bold;
+      }
+    }
+
+    .status-priority-container {
+      @include flex;
+      gap: 50px;
+      background-color: #111;
+      height: fit-content;
+
+      .header {
+        border: 1px solid red;
+      }
+    }
+
+    .status-container,
+    .priority-container {
+      @include flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      letter-spacing: 1.1px;
+    }
+
+    .status-container p:first-child,
+    .priority-container p:first-child {
+      font-weight: bold;
+    }
+
+    .status-container p:last-child,
+    .priority-container p:last-child {
+      border: 1px solid rgb(53, 107, 232);
+      width: 110px;
+      height: 30px;
+      @include flex;
+    }
+
+    .barrier {
+      border: 2px solid darkcyan;
+      height: 110px;
+    }
+
+    .task-content {
+      word-break: break-all;
+      padding: 10px;
+    }
+
+    .date {
+      @include flex;
+      padding: 20px;
     }
   }
 }
