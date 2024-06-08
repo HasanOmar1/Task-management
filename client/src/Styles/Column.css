@@ -1,0 +1,30 @@
+.Column .big-container {
+  width: 1500px;
+  height: 800px;
+  border-radius: 10px;
+  margin-left: 200px;
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+.Column .col {
+  width: 500px;
+  height: 100%;
+  background-color: #3d3d3d;
+  border-radius: 10px;
+}
+.Column .status {
+  background-color: #333;
+  height: 50px;
+  padding-left: 10px;
+  margin: 7px;
+}
+.Column .status h3 {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+}/*# sourceMappingURL=Column.css.map */

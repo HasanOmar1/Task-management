@@ -1,2 +1,9 @@
 $lightBlack: #333;
-$white: #fff;
+$white: #c2c1c19a;
+$black: black;
+
+@mixin flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
