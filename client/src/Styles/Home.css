@@ -1,4 +1,15 @@
 .Home {
   min-height: 100vh;
   padding: 40px;
+}
+.Home .btns-container {
+  position: absolute;
+  right: 185px;
+  top: 20px;
+}
+.Home #see-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
 }/*# sourceMappingURL=Home.css.map */

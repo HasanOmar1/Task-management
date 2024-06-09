@@ -2,14 +2,14 @@
 
 .Login {
   width: 500px;
-  height: 330px;
+  height: 410px;
   background-color: white;
   color: black;
   position: absolute;
   top: 250px;
   left: 750px;
   border-radius: 10px;
-  padding-top: 50px;
+  padding-top: 30px;
 
   h1 {
     text-align: center;
@@ -20,6 +20,7 @@
     text-align: center;
     padding-bottom: 5px;
     color: red;
+    margin-left: -50px;
   }
 
   .inputs-container {
@@ -37,5 +38,9 @@
     color: blue;
     cursor: pointer;
     padding-left: 5px;
+  }
+
+  #submit-btn {
+    width: 83%;
   }
 }

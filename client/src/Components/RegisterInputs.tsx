@@ -1,21 +1,21 @@
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { useLoginUserMutation } from "../api/usersApi";
 import { useEffect, useState } from "react";
+import { useCreateUserMutation } from "../api/usersApi";
 import Button from "@mui/material/Button";
 import { useDispatch } from "react-redux";
 import { setShowModal } from "../redux/loginModal";
 
-export default function LoginInputs() {
+export default function RegisterInputs() {
+  const [nameInput, setNameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  const [login, { error, isSuccess, data: userData }] = useLoginUserMutation();
+  const [createUser, { error, isSuccess }] = useCreateUserMutation();
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (isSuccess) {
       handleCloseModal();
-      localStorage.setItem("user", JSON.stringify(userData));
     }
   }, [isSuccess]);
 
@@ -23,9 +23,10 @@ export default function LoginInputs() {
     dispatch(setShowModal());
   };
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    login({
+    createUser({
+      name: nameInput,
       email: emailInput,
       password: passwordInput,
     });
@@ -33,7 +34,7 @@ export default function LoginInputs() {
 
   return (
     <>
-      {error && <p id="err">Invalid Credentials</p>}
+      {error && <p id="err">User already Exists</p>}
       <Box
         component="form"
         sx={{
@@ -41,8 +42,15 @@ export default function LoginInputs() {
         }}
         noValidate
         autoComplete="off"
-        onSubmit={handleLogin}
+        onSubmit={handleCreateUser}
       >
+        <TextField
+          id="name"
+          label="Name"
+          variant="outlined"
+          value={nameInput}
+          onChange={(e) => setNameInput(e.target.value)}
+        />
         <TextField
           id="email"
           label="Email"
@@ -64,7 +72,7 @@ export default function LoginInputs() {
           id="submit-btn"
           type="submit"
         >
-          Login
+          Sign up
         </Button>
       </Box>
     </>

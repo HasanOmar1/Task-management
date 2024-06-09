@@ -12,9 +12,26 @@ const usersApi = createApi({
         method: "GET",
       }),
     }),
+    createUser: builder.mutation({
+      query: ({ name, email, password }) => ({
+        url: `/users/create`,
+        method: "POST",
+        body: { name, email, password },
+      }),
+      invalidatesTags: ["users"],
+    }),
+    loginUser: builder.mutation({
+      query: ({ email, password }) => ({
+        url: `/users/login`,
+        method: "POST",
+        body: { email, password },
+      }),
+      invalidatesTags: ["users"],
+    }),
   }),
 });
 
-export const { useGetUsersQuery } = usersApi;
+export const { useGetUsersQuery, useCreateUserMutation, useLoginUserMutation } =
+  usersApi;
 
 export default usersApi;
