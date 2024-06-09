@@ -21,3 +21,13 @@ This Project was meant to create a kanban task management system with drag and d
 - BcryptJS
 - Cors
 - Dotenv
+
+# Netlify
+
+https://tasks-management-hasan.netlify.app/
+
+# Render
+
+https://task-manager-icbh.onrender.com
+
+Used Clever Cloud to host my MySQL database.
