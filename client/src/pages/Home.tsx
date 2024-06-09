@@ -1,14 +1,12 @@
 import Column from "../Components/Column";
+import Login from "../Components/Login";
 import "../Styles/Home.css";
-// import { useGetUsersQuery } from "../api/usersApi";
 
 const Home = () => {
-  // const { data: users } = useGetUsersQuery();
-  // console.log(users);
-
   return (
     <div className="Home">
       <Column />
+      <Login />
     </div>
   );
 };

@@ -1,0 +1,36 @@
+.Login {
+  width: 500px;
+  height: 330px;
+  background-color: white;
+  color: black;
+  position: absolute;
+  top: 250px;
+  left: 750px;
+  border-radius: 10px;
+  padding-top: 50px;
+}
+.Login h1 {
+  text-align: center;
+  padding-bottom: 10px;
+}
+.Login #err {
+  text-align: center;
+  padding-bottom: 5px;
+  color: red;
+}
+.Login .inputs-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-left: 70px;
+}
+.Login #reg-login {
+  padding-top: 5px;
+  padding-left: 80px;
+}
+.Login #register-span {
+  color: blue;
+  cursor: pointer;
+  padding-left: 5px;
+}/*# sourceMappingURL=Login.css.map */

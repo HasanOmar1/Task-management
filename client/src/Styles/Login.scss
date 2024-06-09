@@ -1,0 +1,41 @@
+@import "../Variables/variables.scss";
+
+.Login {
+  width: 500px;
+  height: 330px;
+  background-color: white;
+  color: black;
+  position: absolute;
+  top: 250px;
+  left: 750px;
+  border-radius: 10px;
+  padding-top: 50px;
+
+  h1 {
+    text-align: center;
+    padding-bottom: 10px;
+  }
+
+  #err {
+    text-align: center;
+    padding-bottom: 5px;
+    color: red;
+  }
+
+  .inputs-container {
+    @include flex;
+    flex-direction: column;
+    padding-left: 70px;
+  }
+
+  #reg-login {
+    padding-top: 5px;
+    padding-left: 80px;
+  }
+
+  #register-span {
+    color: blue;
+    cursor: pointer;
+    padding-left: 5px;
+  }
+}
