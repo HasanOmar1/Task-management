@@ -34,7 +34,7 @@ const Home = () => {
   return (
     <div className="Home">
       <div className="btns-container">
-        <Stack spacing={2} direction="row">
+        <Stack direction="row">
           {!isLoggedIn && (
             <Button variant="contained" onClick={handleToggleModal}>
               Login

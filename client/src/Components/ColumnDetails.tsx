@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useGetTasksQuery, useUpdateTaskMutation } from "../api/tasksApi";
 import { TaskType } from "../types/TaskType";
+import PriorityOptions from "./PriorityOptions";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 
 type ColumnDetailsProps = {
   status: string;
+  array: TaskType[];
 };
 
-const ColumnDetails = ({ status }: ColumnDetailsProps) => {
+const ColumnDetails = ({ status, array }: ColumnDetailsProps) => {
   const [priorityStatus, setPriorityStatus] = useState<{
     [key: string]: boolean;
   }>({});
 
   const {
-    data: tasks,
+    // data: tasks,
     isLoading: loadingTasks,
     error: errorTasks,
     isSuccess: isSuccessTasks,
@@ -54,81 +57,76 @@ const ColumnDetails = ({ status }: ColumnDetailsProps) => {
       <div className="status">
         <h3>📃 {status}</h3>
       </div>
-      <div className="tasks-container">
-        {loadingTasks && <h3 className="loading">Loading...</h3>}
-        {isSuccessTasks && (
-          <>
-            {tasks.map((task: TaskType) => (
-              <div key={task.taskId} className="task">
-                <div className="assign-container">
-                  <span>{task.assignor}</span> assigned a task to
-                  <span>{task.assignTo}</span> on{" "}
-                  <span>{task.creationDate.slice(0, 10)}</span>
-                </div>
-                <p className="task-content">{task.task}</p>
+      <Droppable droppableId={status} type="tasks">
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            <div className="tasks-container">
+              {loadingTasks && <h3 className="loading">Loading...</h3>}
+              {isSuccessTasks && (
+                <>
+                  {array.map((task: TaskType, index: number) => (
+                    <Draggable
+                      key={task.taskId}
+                      draggableId={task.taskId.toString()}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <div key={task.taskId} className="task">
+                            <div className="assign-container">
+                              <span>{task.assignor}</span> assigned a task to
+                              <span>{task.assignTo}</span> on
+                              <span>{task.creationDate.slice(0, 10)}</span>
+                            </div>
+                            <p className="task-content">{task.task}</p>
 
-                <div className="status-priority-container">
-                  <div className="status-container">
-                    <p>Status</p>
-                    <p className="border">{task.status}</p>
-                  </div>
+                            <div className="status-priority-container">
+                              <div className="status-container">
+                                <p>Status</p>
+                                <p className="border">{task.status}</p>
+                              </div>
 
-                  <hr className="barrier" />
+                              <hr className="barrier" />
 
-                  <div className="priority-container">
-                    <p>Priority</p>
-                    <div className="priority-popup">
-                      {priorityStatus[task.taskId] && (
-                        <div className="priority-options">
-                          <p
-                            className="select-priority"
-                            onClick={() => handleUpdateTask(task.taskId, "Low")}
-                          >
-                            Low
-                          </p>
-                          <p
-                            className="select-priority"
-                            onClick={() =>
-                              handleUpdateTask(task.taskId, "Medium")
-                            }
-                          >
-                            Medium
-                          </p>
-                          <p
-                            className="select-priority"
-                            onClick={() =>
-                              handleUpdateTask(task.taskId, "High")
-                            }
-                          >
-                            High
-                          </p>
-                          <p
-                            className="select-priority"
-                            onClick={() =>
-                              handleUpdateTask(task.taskId, "Very High")
-                            }
-                          >
-                            Very High
-                          </p>
+                              <div className="priority-container">
+                                <p>Priority</p>
+                                <div className="priority-popup">
+                                  {priorityStatus[task.taskId] && (
+                                    <PriorityOptions
+                                      handleUpdateTask={handleUpdateTask}
+                                      task={task}
+                                    />
+                                  )}
+
+                                  <p
+                                    className={`${taskStatusColor(
+                                      task.priority
+                                    )} border select-priority`}
+                                    onClick={() =>
+                                      handlePriorityStatus(task.taskId)
+                                    }
+                                  >
+                                    {task.priority}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       )}
-
-                      <p
-                        className={`${taskStatusColor(
-                          task.priority
-                        )} border select-priority`}
-                        onClick={() => handlePriorityStatus(task.taskId)}
-                      >
-                        {task.priority}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </>
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </>
+              )}
+            </div>
+          </div>
         )}
-      </div>
+      </Droppable>
       <div> Add Task </div>
     </div>
   );
