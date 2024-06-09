@@ -7,7 +7,7 @@ This Project was meant to create a kanban task management system with drag and d
 - React
 - TypeScript
 - React-beautiful-dnd ( drag and drop)
-- Sass ( Scss)
+- Sass (Scss)
 - Redux / Redux Toolkit
 - Material UI
 
